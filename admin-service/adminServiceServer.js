@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const config = require('./config/config');
-const authRoute = require('./routes/authRoute');
+const adminRoute = require('./routes/adminRoute');
 
 const app = express();
 
@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(cors());
 
-app.use('/auth', authRoute);
+app.use('/admin', adminRoute);
 
 mongoose.connect(dbURL).then(() => {
     console.log('Database was connected');

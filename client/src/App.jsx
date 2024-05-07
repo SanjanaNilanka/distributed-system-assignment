@@ -8,7 +8,8 @@ import { Button, CssBaseline } from '@mui/material';
 import customTheme from './customTheme';
 import Error404 from './components/404/Error404'
 import LandingPage from './components/home/LandingPage';
-import AppAppBar from './components/home/AppAppBar';
+import AppAppBar from './components/appbar/AppAppBar';
+import CommonStack from './stacks/CommonStack';
 
 /*const getDesignTokens = (mode) => ({
   palette: {
@@ -79,13 +80,29 @@ const App = () => {
   }
   
   const [is404, setIs404] = React.useState(false);
+  const [isNavbarHidden, setIsNavbarHidden] = React.useState(false);
+  const [isFooterHiddden, setIsFooterHidden] = React.useState(false);
   const currentLocation = window.location.pathname;
+  
   useEffect(() => {
     if (currentLocation === '/') {
       setIs404(false)
-    } else if (currentLocation === '/mrp-home') {
+    } else if (currentLocation === '/') {
       setIs404(false)
-    } else if (currentLocation === '/mrp') {
+    } else if (currentLocation === '/') {
+      setIs404(false)
+    } else {
+      setIs404(true)
+    }
+
+  }, []);
+  
+  useEffect(() => {
+    if (currentLocation === '/') {
+      setIs404(false)
+    } else if (currentLocation === '/') {
+      setIs404(false)
+    } else if (currentLocation === '/') {
       setIs404(false)
     } else {
       setIs404(true)
@@ -96,20 +113,18 @@ const App = () => {
   return (
     <ThemeProvider theme={currentTheme}>
       <CssBaseline/>
-      <header>
-        {is404? <div></div> : <AppAppBar toggleColorMode={toogleTheme} />}
-      </header>
+      
       <main>
         <Router>
           <Routes>
-            <Route path="/" element={<LandingPage/>} />
+            <Route path="/" element={<CommonStack />}>
+              <Route index element={<LandingPage/>} />
+              <Route path='home' element={<LandingPage/>} />
+            </Route>
             <Route path="*" element={<Error404/>} />
           </Routes>
         </Router>
       </main>
-      <footer>
-        
-      </footer>
     </ThemeProvider>
   );
 }

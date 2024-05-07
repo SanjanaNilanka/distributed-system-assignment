@@ -9,6 +9,7 @@ import customTheme from './customTheme';
 import Error404 from './components/404/Error404'
 import LandingPage from './components/home/LandingPage';
 import AppAppBar from './components/home/AppAppBar';
+import Payment from './components/payments/Payment';
 
 /*const getDesignTokens = (mode) => ({
   palette: {
@@ -104,6 +105,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<LandingPage/>} />
             <Route path="*" element={<Error404/>} />
+            <Route path="/payments" element={<Payment/>} />
           </Routes>
         </Router>
       </main>

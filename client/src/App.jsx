@@ -8,46 +8,11 @@ import { Button, CssBaseline } from '@mui/material';
 import customTheme from './customTheme';
 import Error404 from './components/404/Error404'
 import LandingPage from './components/home/LandingPage';
-import AppAppBar from './components/home/AppAppBar';
-
-/*const getDesignTokens = (mode) => ({
-  palette: {
-    mode,
-    primary: {
-      ...(mode === 'dark' && {
-        main: "#105bd8",
-      }),
-      ...(mode === 'light' && {
-        main: "#105bd8",
-      }),
-    },
-    ...(mode === 'dark' && {
-      background: {
-        default: deepOrange[900],
-        paper: deepOrange[900],
-        navbar: "rgb(0, 0, 0, 0.8)"
-      },
-    }),
-    ...(mode === 'light' && {
-      background: {
-        default: deepOrange[900],
-        paper: deepOrange[900],
-        navbar: "rgb(255, 255, 255, 0.8)"
-      },
-    }),
-    text: {
-      ...(mode === 'light'
-        ? {
-            primary: grey[900],
-            secondary: grey[800],
-          }
-        : {
-            primary: '#fff',
-            secondary: grey[500],
-          }),
-    },
-  },
-});*/
+import AppAppBar from './components/appbar/AppAppBar';
+import CommonStack from './stacks/CommonStack';
+import InstructorStack from './stacks/InstructorStack';
+import InstructorDashboard from './components/instructor/InstructorDashboard';
+import CreateCourse from './components/instructor/CreateCourse';
 
 
 
@@ -79,13 +44,29 @@ const App = () => {
   }
   
   const [is404, setIs404] = React.useState(false);
+  const [isNavbarHidden, setIsNavbarHidden] = React.useState(false);
+  const [isFooterHiddden, setIsFooterHidden] = React.useState(false);
   const currentLocation = window.location.pathname;
+  
   useEffect(() => {
     if (currentLocation === '/') {
       setIs404(false)
-    } else if (currentLocation === '/mrp-home') {
+    } else if (currentLocation === '/') {
       setIs404(false)
-    } else if (currentLocation === '/mrp') {
+    } else if (currentLocation === '/') {
+      setIs404(false)
+    } else {
+      setIs404(true)
+    }
+
+  }, []);
+  
+  useEffect(() => {
+    if (currentLocation === '/') {
+      setIs404(false)
+    } else if (currentLocation === '/') {
+      setIs404(false)
+    } else if (currentLocation === '/') {
       setIs404(false)
     } else {
       setIs404(true)
@@ -96,20 +77,23 @@ const App = () => {
   return (
     <ThemeProvider theme={currentTheme}>
       <CssBaseline/>
-      <header>
-        {is404? <div></div> : <AppAppBar toggleColorMode={toogleTheme} />}
-      </header>
+      
       <main>
         <Router>
           <Routes>
-            <Route path="/" element={<LandingPage/>} />
-            <Route path="*" element={<Error404/>} />
+            <Route path="/" element={<CommonStack toggleTheme={toogleTheme} />}>
+              <Route index element={<LandingPage/>} />
+              <Route path='home' element={<LandingPage/>} />
+            </Route>
+            <Route path="/instructor" element={<InstructorStack toggleColorMode={toogleTheme}/>}>
+              <Route index element={<InstructorDashboard/>} />
+              <Route path='dashboard' element={<InstructorDashboard/>} />
+              <Route path='create-course' element={<CreateCourse/>} />
+            </Route>
+            <Route path="*" element={<Error404/>} /> 
           </Routes>
         </Router>
       </main>
-      <footer>
-        
-      </footer>
     </ThemeProvider>
   );
 }

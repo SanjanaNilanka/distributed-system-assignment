@@ -4,11 +4,11 @@ import LandingPage from '../components/home/LandingPage'
 import AppAppBar from '../components/appbar/AppAppBar'
 import Footer from '../components/footer/Footer'
 
-export default function CommonStack() {
+export default function CommonStack({ toggleTheme }) {
   return (
     <div>
       <header>
-        <AppAppBar/>
+        <AppAppBar toggleColorMode={toggleTheme}/>
       </header>
 
       <Routes>

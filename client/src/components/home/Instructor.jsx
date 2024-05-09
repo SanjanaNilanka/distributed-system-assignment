@@ -24,7 +24,7 @@ export default function Instructor() {
           gap: { xs: 3, sm: 2 },
         }}
       >
-        <Typography>Become an instructor</Typography>
+        <Typography variant='h4' sx={{}}>Become an instructor</Typography>
         <Typography>Instructors from around the world teach millions of learners on LearnVerse. We provide the tools and skills to teach what you love.</Typography>
         <Button variant='contained'>Start Teaching Today</Button>
       </Box>

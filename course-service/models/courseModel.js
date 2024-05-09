@@ -15,23 +15,23 @@ const CourseSchema = new mongoose.Schema({
 	},
 	description: {
 		type: String,
-    },
-    price: {
-        type: String,
-    },
-    discount: {
-        type: String,
-    },
-    status: {
-        type: String,
-        default: "pending",
-    }, //approved or rejected or pending
-    category: {
-        type: String,
-    },
-    subCategory: {
-        type: String,
-    },
+	},
+	price: {
+		type: String,
+	},
+	discount: {
+		type: String,
+	},
+	status: {
+		type: String,
+		default: "pending",
+	}, //approved or rejected or pending
+	category: {
+		type: String,
+	},
+	subCategory: {
+		type: String,
+	},
 	learners: [],
 	wishlist: [],
 	review: [

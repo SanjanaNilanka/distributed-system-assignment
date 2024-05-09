@@ -10,45 +10,9 @@ import Error404 from './components/404/Error404'
 import LandingPage from './components/home/LandingPage';
 import AppAppBar from './components/appbar/AppAppBar';
 import CommonStack from './stacks/CommonStack';
-
-/*const getDesignTokens = (mode) => ({
-  palette: {
-    mode,
-    primary: {
-      ...(mode === 'dark' && {
-        main: "#105bd8",
-      }),
-      ...(mode === 'light' && {
-        main: "#105bd8",
-      }),
-    },
-    ...(mode === 'dark' && {
-      background: {
-        default: deepOrange[900],
-        paper: deepOrange[900],
-        navbar: "rgb(0, 0, 0, 0.8)"
-      },
-    }),
-    ...(mode === 'light' && {
-      background: {
-        default: deepOrange[900],
-        paper: deepOrange[900],
-        navbar: "rgb(255, 255, 255, 0.8)"
-      },
-    }),
-    text: {
-      ...(mode === 'light'
-        ? {
-            primary: grey[900],
-            secondary: grey[800],
-          }
-        : {
-            primary: '#fff',
-            secondary: grey[500],
-          }),
-    },
-  },
-});*/
+import InstructorStack from './stacks/InstructorStack';
+import InstructorDashboard from './components/instructor/InstructorDashboard';
+import CreateCourse from './components/instructor/CreateCourse';
 
 
 
@@ -117,11 +81,16 @@ const App = () => {
       <main>
         <Router>
           <Routes>
-            <Route path="/" element={<CommonStack />}>
+            <Route path="/" element={<CommonStack toggleTheme={toogleTheme} />}>
               <Route index element={<LandingPage/>} />
               <Route path='home' element={<LandingPage/>} />
             </Route>
-            <Route path="*" element={<Error404/>} />
+            <Route path="/instructor" element={<InstructorStack toggleColorMode={toogleTheme}/>}>
+              <Route index element={<InstructorDashboard/>} />
+              <Route path='dashboard' element={<InstructorDashboard/>} />
+              <Route path='create-course' element={<CreateCourse/>} />
+            </Route>
+            <Route path="*" element={<Error404/>} /> 
           </Routes>
         </Router>
       </main>

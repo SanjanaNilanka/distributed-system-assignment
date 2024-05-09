@@ -115,7 +115,8 @@ const getDesignTokens = (mode) => ({
     background: {
       default: '#fff',
       paper: gray[50],
-      ...(mode === 'dark' && { default: gray[900], paper: gray[800] }),
+      navbar: '#fbfcfe',
+      ...(mode === 'dark' && { default: gray[900], paper: gray[800], navbar: '#0f1619' }),
     },
     text: {
       primary: gray[800],
@@ -476,9 +477,9 @@ export default function customTheme(mode) {
         styleOverrides: {
           root: ({ theme }) => ({
             backgroundImage: 'none',
-            backgroundColor: gray[100],
+            backgroundColor: "",
             ...(theme.palette.mode === 'dark' && {
-              backgroundColor: alpha(gray[900], 0.6),
+              backgroundColor: alpha(gray[800], 0.6),
             }),
           }),
         },
@@ -546,7 +547,7 @@ export default function customTheme(mode) {
           },
         },
       },
-      MuiTextField: {
+      /*MuiTextField: {
         styleOverrides: {
           root: ({ theme }) => ({
             '& label .Mui-focused': {
@@ -608,7 +609,7 @@ export default function customTheme(mode) {
             }),
           }),
         },
-      },
+      },*/
     },
   };
 }

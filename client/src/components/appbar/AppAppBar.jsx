@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
-import ToggleColorMode from '../home/ToggleColorMode';
+import ToggleColorMode from '../toggle-mode/ToggleColorMode';
 
 const logoStyle = {
   width: '30px',

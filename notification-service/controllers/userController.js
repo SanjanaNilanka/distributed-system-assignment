@@ -45,7 +45,6 @@ const enrolUser = async (req, res) => {
     // Use the enrol method from User model
     const user = await User.enrol(name, email, phone);
 
-    // Customize the message body for user enrollment
     const message = `Welcome, ${user.name}! You have successfully enrolled.`;
 
     // Send SMS notification

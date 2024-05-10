@@ -4,7 +4,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const userRoutes = require("./routes/userRoutes");
-const { enrolUser } = require("./controllers/userController");
+const courseRoutes = require("./routes/courseRoutes"); // Import course routes
+const { enrolUserInCourse } = require("./controllers/courseController"); // Import course enrollment controller
 const { sendSMS } = require("./service/sms.service");
 
 const app = express();
@@ -19,7 +20,10 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/users", userRoutes);
-app.use("/api/enrol", enrolUser);
+app.use("/api/courses", courseRoutes); // Use course routes
+
+// Route for enrolling users in courses
+app.post("/api/enrol", enrolUserInCourse);
 
 //Connect db
 mongoose

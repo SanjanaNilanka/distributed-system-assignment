@@ -479,7 +479,7 @@ export default function customTheme(mode) {
             backgroundImage: 'none',
             backgroundColor: "",
             ...(theme.palette.mode === 'dark' && {
-              backgroundColor: alpha(gray[800], 0.6),
+              backgroundColor: "#0f1619",
             }),
           }),
         },

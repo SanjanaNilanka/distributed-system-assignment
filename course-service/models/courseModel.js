@@ -113,28 +113,28 @@ const CourseSchema = new mongoose.Schema({
 						default: Date.now,
 					},
 				},
-            ],
-            quiz: [
-                {
-                    question: {
-                        type: String,
-                    },
-                    options: [
-                        {
-                            type: String,
-                        },
-                    ],
-                    answers: [
-                        {
-                            type: String,
-                        }
-                    ],
-                    date: {
-                        type: Date,
-                        default: Date.now,
-                    },
-                }
-            ],
+			],
+			quiz: [
+				{
+					question: {
+						type: String,
+					},
+					options: [
+						{
+							type: String,
+						},
+					],
+					answers: [
+						{
+							type: String,
+						}
+					],
+					date: {
+						type: Date,
+						default: Date.now,
+					},
+				}
+			],
 			date: {
 				type: Date,
 				default: Date.now,

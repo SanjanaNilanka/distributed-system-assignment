@@ -298,6 +298,20 @@ export default function CreateCourse() {
     }
   };
 
+  const [outlines, setOutlines] = useState([
+    {
+      lectureNo: '',
+      lectureTitle: '',
+      lessons: [
+        {
+          lessonNo: '',
+          lessonTitle: '',
+          lessonDesc: '',
+        }
+      ]
+    }
+  ]);
+
   return (
     <div>
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
@@ -488,9 +502,10 @@ export default function CreateCourse() {
               </Box>  
             }
           </Grid>
-          
+          <Grid item xs={6} sx={{ display: 'flex', gap: 1, position: 'relative', alignItems: 'center' }}>
+            <Typography variant='h6'>Build outline of your course</Typography>
+          </Grid>
         </Grid>
-          
       </Container>
     </div>
   )

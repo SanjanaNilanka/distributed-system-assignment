@@ -36,19 +36,16 @@ const enrolUserInCourse = async (req, res) => {
   try {
     const { courseId, userId } = req.body;
 
-    // Check if the course exists
     const course = await Course.findById(courseId);
     if (!course) {
       return res.status(404).json({ error: "Course not found" });
     }
 
-    // Check if the user exists
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Check if the user's courses property is defined
     if (!user.courses) {
       user.courses = [];
     }
@@ -69,7 +66,6 @@ const enrolUserInCourse = async (req, res) => {
     user.courses.push(courseId);
     await user.save();
 
-    // Increment course enrollment count
     course.enrollment += 1;
     await course.save();
 
@@ -92,18 +88,49 @@ const enrolUserInCourse = async (req, res) => {
   }
 };
 
+const deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Find and delete the user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Find all courses where the user is enrolled
+    const courses = await Course.find({ courses: userId });
+
+    // Remove user from each course's enrolled users list
+    await Promise.all(
+      courses.map(async (course) => {
+        course.enrollment -= 1;
+        course.courses = course.courses.filter(
+          (courseUserId) => courseUserId !== userId
+        );
+        await course.save();
+      })
+    );
+
+    // Delete the user
+    await user.remove();
+
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 // Create a new course
 const createCourse = async (req, res) => {
   try {
     const { coursename, courseId, credits, maxEnrollment } = req.body;
 
-    // Check if the course already exists
     const existingCourse = await Course.findOne({ courseId });
     if (existingCourse) {
       return res.status(400).json({ error: "Course ID already exists" });
     }
 
-    // Create the new course
     const course = new Course({
       coursename,
       courseId,
@@ -112,32 +139,18 @@ const createCourse = async (req, res) => {
     });
     await course.save();
 
+    const users = await User.find({});
+
+    // Send email to each user
+    const subject = "New Course Added to LearnVersa";
+    const text = `Hello,\n\nA new course "${coursename}" has been added to LearnVersa. Check it out now!`;
+    await Promise.all(
+      users.map(async (user) => {
+        await sendEmail(user.email, subject, text);
+      })
+    );
+
     res.status(201).json({ course });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-// Update an existing course
-const updateCourse = async (req, res) => {
-  try {
-    const { courseId } = req.params;
-    const { coursename, credits, maxEnrollment } = req.body;
-
-    // Check if the course exists
-    const course = await Course.findOne({ courseId });
-    if (!course) {
-      return res.status(404).json({ error: "Course not found" });
-    }
-
-    // Update the course details
-    if (coursename) course.coursename = coursename;
-    if (credits) course.credits = credits;
-    if (maxEnrollment) course.maxEnrollment = maxEnrollment;
-
-    await course.save();
-
-    res.status(200).json({ course });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -166,6 +179,6 @@ const deleteCourse = async (req, res) => {
 module.exports = {
   enrolUserInCourse,
   createCourse,
-  updateCourse,
   deleteCourse,
+  deleteUser,
 };

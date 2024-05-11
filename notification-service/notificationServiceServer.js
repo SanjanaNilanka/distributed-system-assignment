@@ -20,9 +20,8 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/users", userRoutes);
-app.use("/api/courses", courseRoutes); // Use course routes
+app.use("/api/courses", courseRoutes);
 
-// Route for enrolling users in courses
 app.post("/api/enrol", enrolUserInCourse);
 
 //Connect db

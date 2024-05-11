@@ -7,7 +7,7 @@ const createToken = (_id) => {
   return jwt.sign({ _id }, process.env.SECRET, { expiresIn: "3d" });
 };
 
-// Function to send confirmation email
+//use nodemailer
 const sendEmail = async (to, subject, text) => {
   const transporter = nodemailer.createTransport({
     service: "Gmail",
@@ -35,24 +35,21 @@ const enrolUser = async (req, res) => {
   try {
     const { name, email, phone } = req.body;
 
-    // Preprocess phone number to include country code if missing
     let formattedPhone = phone;
     if (!phone.startsWith("+")) {
-      // Assuming default country code is +94 for Sri Lanka
       formattedPhone = "+94" + phone;
     }
 
-    // Use the enrol method from User model
+    // enrol method
     const user = await User.enrol(name, email, phone);
 
-    const message = `Welcome, ${user.name}! You have successfully enrolled.`;
+    const message = `Welcome, ${user.name}! You have successfully enrolled at LearnVerse. Check out our courses and enroll now!`;
 
-    // Send SMS notification
     await sendSMS(user.phone, message);
 
-    // Send confirmation email
+    // Send email
     const subject = "Enrollment Confirmation";
-    const text = `Hello ${user.name},\n\nYou have successfully enrolled.`;
+    const text = `Hello ${user.name},\n\nYou have successfully enrolled at LearnVerse`;
     await sendEmail(user.email, subject, text);
 
     // Create token

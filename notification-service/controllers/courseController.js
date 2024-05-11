@@ -8,7 +8,7 @@ const createToken = (_id) => {
   return jwt.sign({ _id }, process.env.SECRET, { expiresIn: "3d" });
 };
 
-// Function to send confirmation email
+// confirmation email
 const sendEmail = async (to, subject, text) => {
   const transporter = nodemailer.createTransport({
     service: "Gmail",
@@ -57,7 +57,6 @@ const enrolUserInCourse = async (req, res) => {
         .json({ error: "User is already enrolled in this course" });
     }
 
-    // Check if the course has reached its maximum enrollment limit
     if (course.enrollment >= course.maxEnrollment) {
       return res.status(400).json({ error: "Course enrollment limit reached" });
     }
@@ -71,10 +70,8 @@ const enrolUserInCourse = async (req, res) => {
 
     const message = `Hello ${user.name}, you have successfully enrolled in the course "${course.coursename}".`;
 
-    // Send SMS notification
     await sendSMS(user.phone, message);
 
-    // Send confirmation email
     const subject = "Course Enrollment Confirmation";
     const text = `Hello ${user.name},\n\nYou have successfully enrolled in the course "${course.coursename}".`;
     await sendEmail(user.email, subject, text);
@@ -83,39 +80,6 @@ const enrolUserInCourse = async (req, res) => {
     const token = createToken(user._id);
 
     res.status(200).json({ user, token });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-const deleteUser = async (req, res) => {
-  try {
-    const { userId } = req.params;
-
-    // Find and delete the user
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    // Find all courses where the user is enrolled
-    const courses = await Course.find({ courses: userId });
-
-    // Remove user from each course's enrolled users list
-    await Promise.all(
-      courses.map(async (course) => {
-        course.enrollment -= 1;
-        course.courses = course.courses.filter(
-          (courseUserId) => courseUserId !== userId
-        );
-        await course.save();
-      })
-    );
-
-    // Delete the user
-    await user.remove();
-
-    res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -156,23 +120,33 @@ const createCourse = async (req, res) => {
   }
 };
 
-// Delete an existing course
+// Delete
 const deleteCourse = async (req, res) => {
   try {
     const { courseId } = req.params;
 
-    // Check if the course exists
     const course = await Course.findOne({ courseId });
     if (!course) {
       return res.status(404).json({ error: "Course not found" });
     }
 
     // Delete the course
-    await course.remove();
+    await Course.findOneAndDelete({ courseId: courseId });
+
+    // Fetch all users
+    const users = await User.find({});
+
+    const subject = "Course no longer on LearnVersa";
+    const text = `Hello,\n\nThe course "${course.coursename}" has been removed from LearnVersa. \n\nBut don't miss out on everything else!`;
+    await Promise.all(
+      users.map(async (user) => {
+        await sendEmail(user.email, subject, text);
+      })
+    );
 
     res.status(200).json({ message: "Course deleted successfully" });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -180,5 +154,4 @@ module.exports = {
   enrolUserInCourse,
   createCourse,
   deleteCourse,
-  deleteUser,
 };

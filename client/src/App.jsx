@@ -8,11 +8,55 @@ import { Button, CssBaseline } from '@mui/material';
 import customTheme from './customTheme';
 import Error404 from './components/404/Error404'
 import LandingPage from './components/home/LandingPage';
+
 import AppAppBar from './components/appbar/AppAppBar';
 import CommonStack from './stacks/CommonStack';
 import InstructorStack from './stacks/InstructorStack';
 import InstructorDashboard from './components/instructor/InstructorDashboard';
 import CreateCourse from './components/instructor/CreateCourse';
+
+import AppAppBar from './components/home/AppAppBar';
+import Payment from './components/payments/Payment';
+
+/*const getDesignTokens = (mode) => ({
+  palette: {
+    mode,
+    primary: {
+      ...(mode === 'dark' && {
+        main: "#105bd8",
+      }),
+      ...(mode === 'light' && {
+        main: "#105bd8",
+      }),
+    },
+    ...(mode === 'dark' && {
+      background: {
+        default: deepOrange[900],
+        paper: deepOrange[900],
+        navbar: "rgb(0, 0, 0, 0.8)"
+      },
+    }),
+    ...(mode === 'light' && {
+      background: {
+        default: deepOrange[900],
+        paper: deepOrange[900],
+        navbar: "rgb(255, 255, 255, 0.8)"
+      },
+    }),
+    text: {
+      ...(mode === 'light'
+        ? {
+            primary: grey[900],
+            secondary: grey[800],
+          }
+        : {
+            primary: '#fff',
+            secondary: grey[500],
+          }),
+    },
+  },
+});*/
+
 
 
 
@@ -81,6 +125,7 @@ const App = () => {
       <main>
         <Router>
           <Routes>
+
             <Route path="/" element={<CommonStack toggleTheme={toogleTheme} />}>
               <Route index element={<LandingPage/>} />
               <Route path='home' element={<LandingPage/>} />
@@ -91,6 +136,11 @@ const App = () => {
               <Route path='create-course' element={<CreateCourse/>} />
             </Route>
             <Route path="*" element={<Error404/>} /> 
+
+            <Route path="/" element={<LandingPage/>} />
+            <Route path="*" element={<Error404/>} />
+            <Route path="/payments" element={<Payment/>} />
+
           </Routes>
         </Router>
       </main>

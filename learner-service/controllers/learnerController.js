@@ -1,19 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const Learner = require("../model/learnerModel");
+const mongoose = require("mongoose");
 
 //create new learner
 const createNewLearner = async (req, res) => {
   try {
-    const { _id, name } = req.body;
-    const existingLearner = await Learner.findById(_id);
-    if (existingLearner) {
-      return res.status(400).json({ error: `Learner already exist!` });
-    }
-    const newLearner = new Learner({
-      _id,
-      name,
-    });
+    console.log("Received Data:", req.body);
+     const newLearner = new Learner(req.body);
+     await newLearner.save();
+     return res.send({ success: true, message: "New learner added successfully!!!!" });
 
     await newLearner.save();
   } catch (error) {
@@ -37,9 +33,9 @@ const getAllLearners = async (req, res) => {
 // retrieve learner by id
 const getLearnerById = async (req, res) => {
   try {
-    const learnerId = req.params._id;
+    const learnerId = req.params._id; // Use req.params._id if _id is the field name for learner ID
 
-    const learner = await Learner.findById(learnerId);
+    const learner = await Learner.findOne({ _id: learnerId });
     
     if (!learner) {
       return res.status(404).json({ error: `Learner not found` });
@@ -52,49 +48,58 @@ const getLearnerById = async (req, res) => {
   }
 };
 
-//enroll learner
+
+
+
+
+// Enroll learner function
 const enroll = async (req, res) => {
   try {
-    const { learnerId, courseId } = req.body;
-    const learner = await Learner.findById(learnerId);
+    const { learnerId } = req.params; // Extract learnerId from URL parameters
+    const { courseId, progress } = req.body; // Extract courseId and progress from request body
 
-    //check if learner exists in db
+    // Find the learner by ID
+    const learner = await Learner.findOne({ _id: learnerId });
+    
+    // Check if learner exists
     if (!learner) {
-      return res.status(400).json({ error: `Learner does not exists!!` });
+      return res.status(404).json({ error: "Learner not found" });
     }
 
-    if (learner.enrolledCourses.includes(courseId)) {
-      return res
-        .status(400)
-        .json({ error: "Learner is already enrolled in this course" });
+    // Check if the learner is already enrolled in the course
+    const isEnrolled = learner.enrolledCourses.some(course => course.courseId.equals(courseId));
+    if (isEnrolled) {
+      return res.status(400).json({ error: "Learner is already enrolled in this course" });
     }
-    learner.enrolledCourses.push(courseId);
+
+    // Push the new course data to the enrolledCourses array
+    learner.enrolledCourses.push({ courseId, progress });
     await learner.save();
 
-    res.status(200).json({ message: "Student enrolled successfully" });
+    res.status(200).json({ message: "Learner enrolled successfully", learner });
   } catch (error) {
-    return res.status(400).json({ error: `Internal Server error` });
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-//unenroll
+
 const unenroll = async (req, res) => {
   try {
-    const { learnerId, courseId } = req.body;
+    const { learnerId } = req.params; // Extract learnerId from URL
+    const { courseId, progress } = req.body; // Extract courseId from request body
 
     // Find the learner by ID
-    const learner = await Learner.findById(learnerId);
+    const learner = await Learner.findOne({ _id: learnerId });
 
     if (!learner) {
       return res.status(400).json({ error: "Learner not found" });
     }
 
     const enrolledCourses = learner.enrolledCourses;
-    const index = enrolledCourses.indexOf(courseId);
+    const index = enrolledCourses.findIndex(course => course.courseId === courseId);
     if (index === -1) {
-      return res
-        .status(400)
-        .json({ error: "Learner is not enrolled in this course" });
+      return res.status(400).json({ error: "Learner is not enrolled in this course" });
     }
 
     // Remove the course from the learner's enrolled courses
@@ -110,25 +115,43 @@ const unenroll = async (req, res) => {
   }
 };
 
+
+
+
 //get all courses of learner
 const getCoursesByUser = async (req, res) => {
   try {
-    const { learnerId } = req.params;
-    const learner = await Learner.findById(learnerId).populate(
-      "enrolledCourses"
-    );
+    const { _id } = req.params; // Use req.params._id if _id is the field name for learner ID
+
+    // Find the learner by ID and populate the enrolled courses
+    const learner = await Learner.findById(_id).populate('enrolledCourses');
 
     if (!learner) {
-      return res.status(400).json({ error: "Learner not found" });
+      return res.status(404).json({ error: 'Learner not found' });
     }
 
     // Return the enrolled courses of the learner
     res.status(200).json({ courses: learner.enrolledCourses });
   } catch (error) {
-    return res.status(500).json({ error: "Internal Server error" });
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server error' });
   }
 };
 
+const getAllCourses = async (req, res) => {
+  try {
+    // Make a request to the course microservice to fetch all courses
+    const response = await axios.get('http://course-service/api/courses');
+    const courses = response.data;
+
+    // Return the courses in the response
+    res.status(200).json(courses);
+  } catch (error) {
+    // Handle any errors that occur during the request
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
 module.exports = {
   createNewLearner,
   getAllLearners,
@@ -136,5 +159,6 @@ module.exports = {
   enroll,
   unenroll,
   getCoursesByUser,
+  getAllCourses
 };
 

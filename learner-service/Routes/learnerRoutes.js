@@ -7,18 +7,14 @@ router.post("/create-learner", learnerController.createNewLearner);
 //get all learners
 router.get('/get-learners',learnerController.getAllLearners );
 // get one learner
-router.get('/get-learner/:learnerId',learnerController.getLearnerById );
+router.get('/:_id',learnerController.getLearnerById );
 //enroll learner
-router.post('/enroll', learnerController.enroll);
+router.post('/enroll/:learnerId', learnerController.enroll);
 //unenroll learner
-router.delete('/unenroll', learnerController.unenroll);
+router.delete('/:learnerId', learnerController.unenroll);
 //get courses of learner
-router.get('/:learnerId', learnerController.getCoursesByUser);
-// Update lesson completion status
-router.post("/lesson/complete", learnerController.completeLesson);
-// Retrieve progress for a specific course
-router.get("/course/:learnerId/:courseId", learnerController.getCourseProgress);
-// Retrieve progress for all courses enrolled by a learner
-router.get("/course/progress/:learnerId", learnerController.getAllCourseProgress);
+router.get('/:_id', learnerController.getCoursesByUser);
+
+router.get('/courses', learnerController.getAllCourses);
 
 module.exports = router;

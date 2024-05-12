@@ -3,27 +3,39 @@ const mongoose = require("mongoose");
 const learnerSchema = new mongoose.Schema({
   _id: {
     type: String,
-    required: true, // Ensure _id is required
+    required: true,
   },
   name: {
     type: String,
-    required: true, // Ensure name is required
+    required: true,
+  },
+  bio: {
+    type: String,
+    required: false,
+  },
+  email: {
+    type: String,
+    required: false,
+  },
+  learner_pic: {
+    type: String,
+    required: false,
   },
   enrolledCourses: [
     {
       courseId: {
-        type: String,
-        required: true,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
       },
       progress: {
         type: Number,
         default: 0, // percentage completion
       },
-      lessonsCompleted: [
+      lessons: [
         {
           lessonId: {
-            type: String,
-            required: true,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Course",
           },
           completed: {
             type: Boolean,

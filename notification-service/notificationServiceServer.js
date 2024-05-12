@@ -4,8 +4,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const userRoutes = require("./routes/userRoutes");
-const courseRoutes = require("./routes/courseRoutes"); // Import course routes
-const { enrolUserInCourse } = require("./controllers/courseController"); // Import course enrollment controller
+const courseRoutes = require("./routes/courseRoutes");
+const { enrolUserInCourse } = require("./controllers/courseController");
 const { sendSMS } = require("./service/sms.service");
 
 const app = express();

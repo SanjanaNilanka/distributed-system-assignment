@@ -8,7 +8,6 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
-import AppAppBar from './AppAppBar';
 import Hero from './Hero';
 import LogoCollection from './LogoCollection';
 import Highlights from './Highlights';
@@ -16,7 +15,7 @@ import Pricing from './Pricing';
 import Features from './Features';
 import Testimonials from './Testimonials';
 import FAQ from './FAQ';
-import Footer from './Footer';
+import Instructor from './Instructor';
 
 export default function LandingPage() {
 
@@ -34,7 +33,7 @@ export default function LandingPage() {
         <Highlights />
         {/*<Pricing />*/}
         <FAQ />
-        <Footer />
+        <Instructor/>
       </Box>
     </div>
   );

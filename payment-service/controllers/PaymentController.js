@@ -2,24 +2,31 @@ const Payment = require("../models/Payment.js");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 exports.processPayment = async (req, res) => {
-  const { userId, courseId, amount, currency } = req.body;
+  const { userId, courseId, amount, currency, paymentType, firstName, lastName, address1, address2, city, state, zip, country } = req.body;
 
   try {
-    // Create a Stripe payment intent
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100),
       currency,
-      metadata: { userId, courseId },
+      metadata: { userId, courseId, firstName, lastName },
     });
 
-    // Save payment transaction to MongoDB
     const payment = new Payment({
       transactionId: paymentIntent.id,
       userId,
       courseId,
       amount,
       currency,
-      status: "pending",
+      paymentType,
+      paymentStatus: "pending",
+      firstName,
+      lastName,
+      address1,
+      address2,
+      city,
+      state,
+      zip,
+      country,
     });
 
     await payment.save();

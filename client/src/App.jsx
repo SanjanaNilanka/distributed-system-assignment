@@ -15,8 +15,9 @@ import InstructorStack from './stacks/InstructorStack';
 import InstructorDashboard from './components/instructor/InstructorDashboard';
 import CreateCourse from './components/instructor/CreateCourse';
 
-import AppAppBar from './components/home/AppAppBar';
 import Payment from './components/payments/Payment';
+import PaymentSuccess from './components/payments/PaymentSuccess';
+import GetPayment from './components/payments/GetPayment'
 
 /*const getDesignTokens = (mode) => ({
   palette: {
@@ -140,6 +141,8 @@ const App = () => {
             <Route path="/" element={<LandingPage/>} />
             <Route path="*" element={<Error404/>} />
             <Route path="/payments" element={<Payment/>} />
+            <Route path="/paymentSuccess" element={<PaymentSuccess/>} />
+            <Route path="/getPayment/:transactionId" element={<GetPayment/>} />
 
           </Routes>
         </Router>

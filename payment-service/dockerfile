@@ -1,0 +1,17 @@
+FROM node:18-alpine
+
+#App Directory
+WORKDIR /paymentApp
+
+#Install Dependencies
+COPY package.json ./
+
+#Run npm install
+RUN npm install
+
+#Bundle App Source
+COPY . .
+
+EXPOSE 5000
+
+CMD ["npm", "start"]

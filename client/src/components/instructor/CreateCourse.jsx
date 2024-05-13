@@ -12,12 +12,15 @@ import {
   styled,
   LinearProgress,
   Paper,
-  Card
+  Card,
+  IconButton,
+  Divider
 } from '@mui/material'
 import React, { useState } from 'react'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
+import CloseIcon from '@mui/icons-material/Close';
 
 export default function CreateCourse() {
   const handleSubmit = (event) => {
@@ -235,8 +238,11 @@ export default function CreateCourse() {
   const [thumbnailLink, setThumbnailLink] = useState('No file selected');
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
 
+  const [attchmentLink, setAttchmentLink] = useState([]);
+
   const [isPreviewVideoUploading, setIsPreviewVideoUploading] = useState(false)
   const [isThumbnailUploading, setIsThumbnailUploading] = useState(false)
+  const [isAttachmentUploading, setIsAttachmentUploading] = useState(false)
 
   const storage = getStorage();
 
@@ -298,6 +304,60 @@ export default function CreateCourse() {
     }
   };
 
+  const uploadAttachment = async (e, outlineIndex, lessonIndex) => {
+    setIsAttachmentUploading(true);
+    const file = e.target.files[0];
+    /*setThumbnailPreview(URL.createObjectURL(file))*/
+    try {
+      const storageRef = ref(storage, `test-user/attachments/${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on('state_changed', 
+        (snapshot) => {
+          
+        },
+        (error) => {
+          console.error('Error uploading file:', error);
+        },
+        async () => {
+          const downloadURL = await getDownloadURL(storageRef);
+          console.log('File available at', downloadURL);
+          outlines[outlineIndex].lessons[lessonIndex].download.attachmentLink = downloadURL;
+          setIsAttachmentUploading(false);
+        }
+      );
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    }
+  };
+  
+  const uploadLessionVideo = async (e, outlineIndex, lessonIndex) => {
+    setIsAttachmentUploading(true);
+    const file = e.target.files[0];
+    /*setThumbnailPreview(URL.createObjectURL(file))*/
+    try {
+      const storageRef = ref(storage, `test-user/attachments/${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on('state_changed', 
+        (snapshot) => {
+          
+        },
+        (error) => {
+          console.error('Error uploading file:', error);
+        },
+        async () => {
+          const downloadURL = await getDownloadURL(storageRef);
+          console.log('File available at', downloadURL);
+          outlines[outlineIndex].lessons[lessonIndex].video = downloadURL;
+          setIsAttachmentUploading(false);
+        }
+      );
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    }
+  };
+
   const [outlines, setOutlines] = useState([
     {
       lectureNo: '',
@@ -307,10 +367,144 @@ export default function CreateCourse() {
           lessonNo: '',
           lessonTitle: '',
           lessonDesc: '',
+          download: { attachment: '', attachmentLink: 'No file selected' },
+          duration: '',
+          video: ''
         }
-      ]
+      ],
+      quiz: [
+        {
+          question: '',
+          options: [
+            { option: '', isCorrect: false },
+            { option: '', isCorrect: false },
+            { option: '', isCorrect: false },
+            { option: '', isCorrect: false }
+          ]
+        }
+      ],
+      teachersNote: [],
     }
   ]);
+
+  const handleOutlineChange = (index, field, value) => {
+    const updatedOutlines = [...outlines];
+    updatedOutlines[index][field] = value;
+    setOutlines(updatedOutlines);
+  };
+
+  const handleLessonChange = (outlineIndex, lessonIndex, field, value) => {
+    const updatedOutlines = [...outlines];
+    updatedOutlines[outlineIndex].lessons[lessonIndex][field] = value;
+    setOutlines(updatedOutlines);
+  };
+  
+  const handleLessonDownloadChange = (outlineIndex, lessonIndex, value) => {
+    const updatedOutlines = [...outlines];
+    updatedOutlines[outlineIndex].lessons[lessonIndex].download.attachment = value;
+    setOutlines(updatedOutlines);
+  };
+
+  const handleQuizChange = (outlineIndex, quizIndex, field, value) => {
+    const updatedOutlines = [...outlines];
+    updatedOutlines[outlineIndex].quiz[quizIndex][field] = value;
+    setOutlines(updatedOutlines);
+  };
+  
+  const handleOptionChange = (outlineIndex, quizIndex, index, value) => {
+    const updatedOutlines = [...outlines];
+    updatedOutlines[outlineIndex].quiz[quizIndex].options[index].option = value;
+    setOutlines(updatedOutlines);
+  };
+  
+  const handleOptionIsCorrectChange = (outlineIndex, quizIndex, index, value) => {
+    const updatedOutlines = [...outlines];
+    updatedOutlines[outlineIndex].quiz[quizIndex].options[index].isCorrect = value;
+    setOutlines(updatedOutlines);
+  };
+
+  const handleNoteChange = (outlineIndex, noteIndex, field, value) => {
+    const updatedOutlines = [...outlines];
+    updatedOutlines[outlineIndex].teachersNote[noteIndex][field] = value;
+    setOutlines(updatedOutlines);
+  };
+
+  const addOutline = () => {
+    setOutlines([...outlines, {
+      lectureNo: '',
+      lectureTitle: '',
+      lessons: [{
+        lessonNo: '',
+        lessonTitle: '',
+        lessonDesc: '',
+        download: { attachment: '', attachmentLink: '' },
+        duration: '',
+        video: ''
+      }],
+      quiz: [],
+      teachersNote: []
+    }]);
+  };
+
+  const addLesson = (outlineIndex) => {
+    const updatedOutlines = [...outlines];
+    updatedOutlines[outlineIndex].lessons.push({
+      lessonNo: '',
+      lessonTitle: '',
+      lessonDesc: '',
+      download: { attachment: '', attachmentLink: '' },
+      duration: '',
+      video: ''
+    });
+    setOutlines(updatedOutlines);
+  };
+
+  const addQuiz = (outlineIndex) => {
+    const updatedOutlines = [...outlines];
+    updatedOutlines[outlineIndex].quiz.push({
+      question: '', options: [
+        { option: '', isCorrect: false },
+        { option: '', isCorrect: false },
+        { option: '', isCorrect: false },
+        { option: '', isCorrect: false }
+      ]
+    });
+    setOutlines(updatedOutlines);
+  };
+
+  const addNote = (outlineIndex) => {
+    const updatedOutlines = [...outlines];
+    updatedOutlines[outlineIndex].teachersNote.push({ referenceTitle: '', referenceLinks: '' });
+    setOutlines(updatedOutlines);
+  };
+
+  const removeOutline = (index) => {
+    if (index !== 0) {
+      const updatedOutlines = [...outlines];
+      updatedOutlines.splice(index, 1);
+      setOutlines(updatedOutlines);
+    }
+  };
+
+  const removeLesson = (outlineIndex, lessonIndex) => {
+    const updatedOutlines = [...outlines];
+    if (outlineIndex !== 0 || lessonIndex !== 0) {
+      updatedOutlines[outlineIndex].lessons.splice(lessonIndex, 1);
+      setOutlines(updatedOutlines);
+    }
+  };
+
+  const removeQuiz = (outlineIndex, quizIndex) => {
+    const updatedOutlines = [...outlines];
+    updatedOutlines[outlineIndex].quiz.splice(quizIndex, 1);
+    setOutlines(updatedOutlines);
+  };
+
+  const removeNote = (outlineIndex, noteIndex) => {
+    const updatedOutlines = [...outlines];
+    updatedOutlines[outlineIndex].teachersNote.splice(noteIndex, 1);
+    setOutlines(updatedOutlines);
+  };
 
   return (
     <div>
@@ -502,8 +696,287 @@ export default function CreateCourse() {
               </Box>  
             }
           </Grid>
-          <Grid item xs={6} sx={{ display: 'flex', gap: 1, position: 'relative', alignItems: 'center' }}>
+          <Grid item xs={12} sx={{ display: 'flex', gap: 1, position: 'relative', alignItems: 'center' }}>
             <Typography variant='h6'>Build outline of your course</Typography>
+          </Grid>
+          <Grid item xs={12}>
+          {outlines.map((outline, outlineIndex) => (
+            <Grid key={outlineIndex} sx={{position:'relative'}}>
+              <Divider sx={{ mb:3 }}>Lecture { outlineIndex+1}</Divider>
+              <Grid item xs={12} sx={{ display: 'flex', gap: 2, position: 'relative', mb:3 }}>
+                <TextField
+                  type="text"
+                  id="lectureTitle"
+                  label="Lecture Title"
+                  name="lectureTitle"
+                  variant="filled"
+                  sx={{width: '80%'}}
+                  value={outline.lectureTitle}
+                  onChange={(e) => handleOutlineChange(outlineIndex, 'lectureTitle', e.target.value)}
+                />
+                <TextField
+                  type="text"
+                  sx={{width: '20%'}}
+                  id="lectureNo"
+                  label="Lecture No."
+                  name="lectureNo"
+                  variant="filled"
+                  value={outline.lectureNo}
+                  onChange={(e) => handleOutlineChange(outlineIndex, 'lectureNo', e.target.value)}
+                />
+              </Grid>
+              
+              <Button onClick={() => addLesson(outlineIndex)} sx={{mb:0.75}}>Add Lesson</Button>
+              {outline.lessons.map((lesson, lessonIndex) => (
+                <div key={lessonIndex}>
+                  <Grid item xs={12} sx={{ display: 'flex', gap: 2, position: 'relative', mb:1.5  }}>
+                    <TextField
+                      type="text"
+                      sx={{width: '50%'}}
+                      id="lessonNo"
+                      label="Lesson No"
+                      name="lessonNo"
+                      variant="filled"
+                      value={lesson.lessonNo}
+                      onChange={(e) => handleLessonChange(outlineIndex, lessonIndex, 'lessonNo', e.target.value)}
+                    />
+                    <TextField
+                      type="text"
+                      sx={{width: '50%'}}
+                      id="lessonTitle"
+                      label="Lesson Title"
+                      name="lessonTitle"
+                      variant="filled"
+                      value={lesson.lessonTitle}
+                      onChange={(e) => handleLessonChange(outlineIndex, lessonIndex, 'lessonTitle', e.target.value)}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sx={{ display: 'flex', gap: 2, position: 'relative', alignItems:'center', mb:1.5 }}>
+                    <TextField
+                      type="text"
+                      sx={{ width: `100%`}}
+                      id="lessonDesc"
+                      label="Lesson Description"
+                      name="lessonDesc"
+                      variant="filled"
+                      value={lesson.lessonDesc}
+                      onChange={(e) => handleLessonChange(outlineIndex, lessonIndex, 'lessonDesc', e.target.value)}
+                    />
+                    {lessonIndex > 0 &&
+                      <Button
+                        size="small"
+                        aria-label="button to toggle theme"
+                        
+                        sx={{
+                          minWidth: '32px',
+                          height: '32px',
+                          p: '4px',
+                          position: 'absolute',
+                          right: 5,
+                          color:'error.main'
+                        }}
+                        onClick={() => removeLesson(outlineIndex, lessonIndex)}
+                      >
+                        <CloseIcon />
+                      </Button>
+                    }
+                    
+                  </Grid>
+                  <Grid item xs={12} sx={{ display: 'flex', gap: 2, position: 'relative', alignItems: 'center', mb: 1.5 }}>
+                    <TextField
+                      type="text"
+                      sx={{width: '50%'}}
+                      id="attachment"
+                      label="Attachment Title"
+                      name="attachment"
+                      variant="filled"
+                      value={lesson.download.attachment}
+                      onChange={(e) => handleLessonDownloadChange(outlineIndex, lessonIndex, e.target.value)}
+                    />
+                    <Grid item xs={6} sx={{ display: 'flex', gap: 1, position: 'relative' }}>
+                      <TextField
+                        fullWidth
+                        id="attachmentLink"
+                        label="Attachment Link"
+                        name="attachmentLink"
+                        variant="filled"
+                        sx={{ margin: 0 }}
+                        value={lesson.download.attachmentLink}
+                        aria-readonly
+                      />
+                    
+                      <Button
+                        component="label"
+                        role={undefined}
+                        variant="contained"
+                        tabIndex={-1}
+                        startIcon={<CloudUploadIcon />}
+                        sx={{ position: 'absolute', right: 8, bottom: 8 }}
+                        onChange={(e)=>uploadAttachment(e, outlineIndex, lessonIndex)}
+                      >
+                        Upload Attachment
+                        <VisuallyHiddenInput type="file" />
+                      </Button>
+                    </Grid>
+                    
+                  </Grid>
+                  <Grid item xs={12} sx={{ display: 'flex', gap: 2, position: 'relative', alignItems: 'center', mb: 3 }}>
+                    <TextField
+                      type="text"
+                      sx={{width: '50%'}}
+                      id="duration"
+                      label="Duration"
+                      name="duration"
+                      variant="filled"
+                      value={lesson.duration}
+                      onChange={(e) => handleLessonChange(outlineIndex, lessonIndex, 'duration', e.target.value)}
+                    />
+                    <Grid item xs={6} sx={{ display: 'flex', gap: 1, position: 'relative' }}>
+                      <TextField
+                        fullWidth
+                        id="lessonVideo"
+                        label="Lesson Video"
+                        name="lessonVideo"
+                        variant="filled"
+                        sx={{ margin: 0 }}
+                        value={lesson.video}
+                        aria-readonly
+                      />
+                    
+                      <Button
+                        component="label"
+                        role={undefined}
+                        variant="contained"
+                        tabIndex={-1}
+                        startIcon={<CloudUploadIcon />}
+                        sx={{ position: 'absolute', right: 8, bottom: 8 }}
+                        onChange={(e)=>uploadLessionVideo(e, outlineIndex, lessonIndex)}
+                      >
+                        Upload Video
+                        <VisuallyHiddenInput type="file" />
+                      </Button>
+                    </Grid>
+                    
+                  </Grid>
+                </div>
+              ))}
+              <Button onClick={() => addQuiz(outlineIndex)} sx={{mb:0.75}}>Add Quiz Question</Button>
+              {outline.quiz.map((quiz, quizIndex) => (
+                <div key={quizIndex}>
+                  <Grid item xs={12} sx={{ display: 'flex', gap: 2, position: 'relative', alignItems: 'center', mb: 1.5 }}>
+                    <TextField
+                      type="text"
+                      sx={{width: '100%'}}
+                      id="question"
+                      label="Question"
+                      name="question"
+                      variant="filled"
+                      value={quiz.question}
+                      onChange={(e) => handleQuizChange(outlineIndex, quizIndex, 'question', e.target.value)}
+                    />
+                    <Button
+                        size="small"
+                        aria-label="button to toggle theme"
+                        
+                        sx={{
+                          minWidth: '32px',
+                          height: '32px',
+                          p: '4px',
+                          position: 'absolute',
+                          right: 5,
+                          color:'error.main'
+                        }}
+                        onClick={() => removeQuiz(outlineIndex, quizIndex)}
+                      >
+                        <CloseIcon />
+                      </Button>
+                  </Grid>
+                  
+                  <Grid item xs={12} sx={{ display: 'flex', gap: 2, position: 'relative', alignItems: 'center', mb: 3 }}>
+                    {outline.quiz[quizIndex].options.map((option, index) => (
+                      <div style={{width:'100%', position:'relative', display: 'flex', alignItems: 'center'}}>
+                        <TextField
+                          type="text"
+                          sx={{width: '100%'}}
+                          id={`option-${index+1}`}
+                          label={`Option ${index+1}`}
+                          name={`option-${index+1}`}
+                          variant="filled"
+                          value={option.option}
+                          onChange={(e) => handleOptionChange(outlineIndex, quizIndex, index, e.target.value)}
+                        />
+                        <Checkbox value={option.isCorrect} onChange={(e)=>handleOptionIsCorrectChange(outlineIndex, quizIndex, index, e.target.value)} size="small" sx={{position:'absolute', right: 0}}/>
+                      </div>
+                     
+                      
+                    ))}
+                  </Grid>
+                </div>
+              ))}
+              <Button onClick={() => addNote(outlineIndex)} sx={{mb:0.75}}>Add Teacher's Note</Button>
+              {outline.teachersNote.map((note, noteIndex) => (
+                <Grid item xs={12} sx={{ display: 'flex', gap: 2, position: 'relative', alignItems: 'center', mb: 1.5 }}>
+                  <TextField
+                    type="text"
+                    sx={{width: '100%'}}
+                    id="question"
+                    label="Question"
+                    name="question"
+                    variant="filled"
+                    value={note.referenceTitle}
+                    onChange={(e) => handleNoteChange(outlineIndex, noteIndex, 'referenceTitle', e.target.value)}
+                  />
+                  <TextField
+                    type="text"
+                    sx={{width: '100%'}}
+                    id="question"
+                    label="Question"
+                    name="question"
+                    variant="filled"
+                    value={note.referenceLinks}
+                    onChange={(e) => handleNoteChange(outlineIndex, noteIndex, 'referenceLinks', e.target.value)}
+                  />
+                  <Button
+                    size="small"
+                    aria-label="button to toggle theme"
+                    
+                    sx={{
+                      minWidth: '32px',
+                      height: '32px',
+                      p: '4px',
+                      position: 'absolute',
+                      right: 5,
+                      color: 'error.main',
+                    }}
+                    onClick={() => removeNote(outlineIndex, noteIndex)}
+                  >
+                    <CloseIcon />
+                  </Button>
+                </Grid>
+              ))}
+              {outlineIndex !== 0 && (
+                <Button
+                  size="small"
+                  aria-label="button to toggle theme"
+                  
+                  sx={{
+                    minWidth: '32px',
+                    height: '32px',
+                    p: '4px',
+                    position: 'absolute',
+                    right: 5,
+                    color: 'error.main',
+                    top:-5
+                  }}
+                  onClick={() => removeOutline(outlineIndex)}
+                >
+                  <CloseIcon />
+                </Button>
+              )}
+              
+            </Grid>
+          ))}
+          <Button onClick={addOutline}>Add Lecture</Button>
           </Grid>
         </Grid>
       </Container>

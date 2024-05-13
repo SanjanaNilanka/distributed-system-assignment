@@ -33,7 +33,6 @@ const CourseSchema = new mongoose.Schema({
 		type: String,
 	},
 	learners: [],
-	wishlist: [],
 	review: [
 		{
 			user: {
@@ -62,7 +61,7 @@ const CourseSchema = new mongoose.Schema({
 			complected: {
 				type: Boolean,
 			},
-			lesson: [
+			lessons: [
 				{
 					lessonNo: {
 						type: Number,
@@ -79,16 +78,6 @@ const CourseSchema = new mongoose.Schema({
 					status: {
 						type: Boolean,
 					},
-					teachersNote: [
-						{
-							referenceTitle: {
-								type: String,
-							},
-							referenceLinks: {
-								type: String,
-							},
-						},
-					],
 					download: {
 						attachment: {
 							type: String,
@@ -121,19 +110,25 @@ const CourseSchema = new mongoose.Schema({
 					},
 					options: [
 						{
-							type: String,
+							option: { type: String },
+							isCorrect: { type: Boolean, default: false }
 						},
-					],
-					answers: [
-						{
-							type: String,
-						}
 					],
 					date: {
 						type: Date,
 						default: Date.now,
 					},
 				}
+			],
+			teachersNote: [
+				{
+					referenceTitle: {
+						type: String,
+					},
+					referenceLinks: {
+						type: String,
+					},
+				},
 			],
 			date: {
 				type: Date,

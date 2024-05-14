@@ -10,9 +10,9 @@ function LearnerProfile() {
   useEffect(() => {
     const fetchLearnerDetails = async () => {
       try {
-        const learnerId = "7890";
+        const learnerId = "2217793";
         const response = await axios.get(
-          `http://localhost:5000/learner/${learnerId}`
+          `http://localhost:5001/learner/${learnerId}`
         );
         setLearnerDetails(response.data);
         setLoading(false);

@@ -25,6 +25,74 @@ exports.updateLessonStatus = async (req, res) => {
     }
   };
 
+// Endpoint to update progress***
+exports.updateProgress = async (req, res) => {
+  try {
+   
+    const { _id, courseId, lessonId } = req.body;
+
+    // Find the learner by ID
+    const learner = await Learner.findById(_id);
+
+    if (!learner) {
+      console.error(`Learner not found for ID: ${_id}`);
+      return res.status(404).json({ error: 'Learner not found' });
+    }
+
+    // Find the enrolled course by ID
+    const enrolledCourse = learner.enrolledCourses.find(
+      (course) => course.courseId.toString() === courseId
+    );
+
+    if (!enrolledCourse) {
+      console.error(`Course not found for learner ${_id} and courseId ${courseId}`);
+      return res.status(404).json({ error: 'Course not found' });
+    }
+
+    // Check if the lesson ID exists in the course's lessons
+    if (!enrolledCourse.courseLessons || !enrolledCourse.courseLessons.includes(lessonId)) {
+      console.error(`Lesson not found for courseId ${courseId} and lessonId ${lessonId}`);
+      return res.status(404).json({ error: 'Lesson not found' });
+    }
+
+    // Update learner's progress for the lesson
+    if (!learner.progress[courseId]) {
+      learner.progress[courseId] = {};
+    }
+    learner.progress[courseId][lessonId] = true;
+
+    await learner.save();
+
+    res.status(200).json({ message: 'Progress updated successfully' });
+  } catch (error) {
+    console.error('Error updating progress:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+//********************************************** */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   exports.updateCourseProgress = async (req, res) => {
     try {

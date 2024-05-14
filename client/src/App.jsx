@@ -15,7 +15,8 @@ import InstructorDashboard from "./components/instructor/InstructorDashboard";
 import CreateCourse from "./components/instructor/CreateCourse";
 import LearnerDashboard from "./components/learner/learnerDashboard";
 import LearnerStack from "./stacks/LearnerStack";
-import EnrolledCourses from "./components/learner/enrolledCourses";
+import EnrolledCourses from "./components/learner/enrolled-courses";
+import CoursePage from "./components/learner/coursePages";
 const App = () => {
   const [themeMode, setThemeMode] = React.useState("light");
   const currentTheme = createTheme(customTheme(themeMode));
@@ -86,7 +87,7 @@ const App = () => {
             >
               <Route index element={<InstructorDashboard />} />
               <Route path="dashboard" element={<InstructorDashboard />} />
-              <Route path="create-course" element={<CreateCourse />} />
+            
             </Route>
             <Route path="*" element={<Error404 />} />
 
@@ -96,9 +97,10 @@ const App = () => {
             >
               <Route index element={<LearnerDashboard />} />
               <Route path="dashboard" element={<LearnerDashboard />} />
-              
+             
             </Route>
-            <Route path="enrolled-courses" element={<EnrolledCourses />} />
+             <Route path="enrolled-courses" element={<EnrolledCourses />} />
+              <Route path="courses/:courseId" element={<CoursePage />} />
           </Routes>
         </Router>
       </main>

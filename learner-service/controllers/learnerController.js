@@ -52,14 +52,14 @@ const getLearnerById = async (req, res) => {
 
 
 
-// Enroll learner function
+
 const enroll = async (req, res) => {
   try {
-    const { learnerId } = req.params; // Extract learnerId from URL parameters
-    const { courseId, progress } = req.body; // Extract courseId and progress from request body
+    const { _id } = req.params; 
+    const { courseId, progress } = req.body;
 
     // Find the learner by ID
-    const learner = await Learner.findOne({ _id: learnerId });
+    const learner = await Learner.findById(_id);
     
     // Check if learner exists
     if (!learner) {
@@ -83,37 +83,41 @@ const enroll = async (req, res) => {
   }
 };
 
-
+//unenroll
 const unenroll = async (req, res) => {
   try {
-    const { learnerId } = req.params; // Extract learnerId from URL
-    const { courseId, progress } = req.body; // Extract courseId from request body
+    const { courseId } = req.body; // Course ID to unenroll from
 
     // Find the learner by ID
-    const learner = await Learner.findOne({ _id: learnerId });
+    const learnerId = req.params._id;
+
+    // Assuming Learner is the model for your learners
+    const learner = await Learner.findById(learnerId);
 
     if (!learner) {
-      return res.status(400).json({ error: "Learner not found" });
+      return res.status(404).json({ error: "Learner not found" });
     }
 
-    const enrolledCourses = learner.enrolledCourses;
-    const index = enrolledCourses.findIndex(course => course.courseId === courseId);
+    // Find the index of the course in enrolledCourses array
+    const index = learner.enrolledCourses.findIndex(course => course.courseId.toString() === courseId);
+
     if (index === -1) {
       return res.status(400).json({ error: "Learner is not enrolled in this course" });
     }
 
-    // Remove the course from the learner's enrolled courses
-    enrolledCourses.splice(index, 1);
+    // Remove the course and its progress
+    learner.enrolledCourses.splice(index, 1);
 
     // Update the learner's enrolledCourses field and save the changes
-    learner.enrolledCourses = enrolledCourses;
     await learner.save();
 
     res.status(200).json({ message: "Student unenrolled successfully" });
   } catch (error) {
-    return res.status(500).json({ error: "Internal Server error" });
+    console.error("Error unenrolling from course:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 
 

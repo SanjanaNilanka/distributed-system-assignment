@@ -18,8 +18,11 @@ import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { mainListItems, secondaryListItems } from '../components/instructor/listItems';
+import { mainListItems, secondaryListItems } from '../components/learner/listItems';
 import LearnerDashboard from '../components/learner/learnerDashboard';
+import EnrolledCourses from '../components/learner/enrolled-courses'
+import CoursePage from '../components/learner/coursePages'
+
 import ToggleColorMode from '../components/toggle-mode/ToggleColorMode';
 import CreateCourse from '../components/instructor/CreateCourse';
 
@@ -164,9 +167,10 @@ export default function LearnerStack({ mode, toggleColorMode }) {
       >
         <Toolbar />
         <Routes>
-          <Route path='/' element={<LearnerDashboard/>} />
-          <Route path='dashboard' element={<LearnerDashboard/>} />
-          <Route path='enrolled-courses' element={<enrolledCourses/>} />
+          <Route path='/' element={<LearnerDashboard />} />
+          <Route path='dashboard' element={<LearnerDashboard />} />
+          <Route path='enrolled-courses' element={<EnrolledCourses />} />
+          <Route path="courses/:courseId" element={<CoursePage />} />
         </Routes>
       </Box>
     </Box>

@@ -22,6 +22,10 @@ import { mainListItems, secondaryListItems } from '../components/instructor/list
 import InstructorDashboard from '../components/instructor/InstructorDashboard';
 import ToggleColorMode from '../components/toggle-mode/ToggleColorMode';
 import CreateCourse from '../components/instructor/CreateCourse';
+import axios from 'axios';
+import { Avatar } from '@mui/material';
+import AllMyCourses from '../components/instructor/AllMyCourses';
+import UpdateCourse from '../components/instructor/UpdateCourse';
 
 const drawerWidth = 240;
 
@@ -75,6 +79,59 @@ export default function InstructorStack({ mode, toggleColorMode }) {
     setOpen(!open);
   };
 
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+
+  React.useEffect(() => { 
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsLoggedIn(true)
+    } else {
+      setIsLoggedIn(false)
+    }
+  }, [])
+
+  const [loggedInUser, setLoggedInUser] = React.useState(null);
+  const [loggedInUserDetails, setLoggedInUserDetails] = React.useState(null);
+  
+  const token = localStorage.getItem('token');
+  React.useEffect(() => {
+    
+    const getLooggedInUser = async () => {
+      try {
+        const response = await axios.get(`http://localhost:7000/auth/logged-user`, {
+          headers: {
+            Authorization: `${token}`
+          }
+        });
+        
+        if (response.data.success) {
+          setLoggedInUser(response.data.user)
+          localStorage.setItem('role', response.data.user.role)
+          localStorage.setItem('userID', response.data.user._id)
+          console.log(loggedInUser)
+          console.log(response.data.user)
+        }
+      } catch (err) {
+        
+      }
+    };
+    
+    const getLooggedInUserDetails = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8000/instructor/get/${localStorage.getItem('userID')}`);
+        
+        
+          setLoggedInUserDetails(response.data)
+        
+      } catch (err) {
+        
+      }
+    };
+
+    getLooggedInUser();
+    getLooggedInUserDetails();
+  }, [])
+  
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -104,12 +161,29 @@ export default function InstructorStack({ mode, toggleColorMode }) {
                 px: 0,
                 gap: 1
               }}
-            >
+          >
+            {!window.location.pathname.startsWith('/instructor') &&
               <img
-                src={window.location.pathname.startsWith('/instructor')?"../images/logo.png":"images/logo.png"} 
+                src="images/logo.png" 
                 style={{width: '25px'}}
                 alt="logo of sitemark"
               />
+            }
+            {(window.location.pathname.startsWith('/instructor') && !window.location.pathname.startsWith('/instructor/up') ) &&
+              <img
+                src="../images/logo.png" 
+                style={{width: '25px'}}
+                alt="logo of sitemark"
+              />
+            }
+            {window.location.pathname.startsWith('/instructor/up') &&
+              <img
+                src="../../images/logo.png" 
+                style={{width: '25px'}}
+                alt="logo of sitemark"
+              />
+            }
+              
               <Typography variant='h4' color='primary.main' sx={{}}>LearnVerse</Typography>
             </Box>
           <Typography
@@ -128,6 +202,12 @@ export default function InstructorStack({ mode, toggleColorMode }) {
               <NotificationsIcon />
             </Badge>
           </IconButton>
+          {isLoggedIn &&
+            <Box sx={{display:'flex', alignItems:'center', gap:1, ml:2}}>
+              <Typography >{loggedInUserDetails?.fullName}</Typography>
+              <Avatar/>
+            </Box>
+          }
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
@@ -166,7 +246,9 @@ export default function InstructorStack({ mode, toggleColorMode }) {
         <Routes>
           <Route path='/' element={<InstructorDashboard/>} />
           <Route path='dashboard' element={<InstructorDashboard/>} />
-          <Route path='/create-course' element={<CreateCourse/>} />
+          <Route path='/create-course' element={<CreateCourse />} />
+          <Route path='/all-my-course' element={<AllMyCourses />} />
+          <Route path='/update-course/:id' element={<UpdateCourse/>} />
         </Routes>
       </Box>
     </Box>

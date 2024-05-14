@@ -4,7 +4,7 @@ const authController = require('../controllers/authController');
 const authMiddleware = require('../middleware/authMiddleware');
 
 router.post('/register', authController.registerUser);
-router.get('/login', authController.loginUser);
+router.post('/login', authController.loginUser);
 router.get('/logout', authController.logoutUser);
 router.get('/logged-user', authMiddleware.getLoggedUserMiddleware, authController.getLoggedUser);
 router.get('/logged-user-role', authMiddleware.getLoggedUserMiddleware, authController.getloggedUserRole);

@@ -5,6 +5,7 @@ import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import ForumIcon from '@mui/icons-material/Forum';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import HelpIcon from '@mui/icons-material/Help';
+import MyCourses from './MyCourses';
 
 export default function InstructorDashboard() {
   return (
@@ -15,12 +16,12 @@ export default function InstructorDashboard() {
             <Typography variant='h5'>My Courses</Typography>
             <Box sx={{display: 'flex', gap: 2}}>
               <Button variant='contained' href='/instructor/create-course'>Create Course</Button>
-              <Button variant='contained'>All My Courses</Button>
+              <Button variant='contained' href='/instructor/all-my-course'>All My Courses</Button>
             </Box>
           </Grid>
           <Grid item xs={12}>
             <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-              
+              <MyCourses/>
             </Paper>
           </Grid>
           <Grid item sx={{textAlign: 'center', my:2}} xs={12}>

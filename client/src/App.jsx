@@ -13,6 +13,13 @@ import CommonStack from './stacks/CommonStack';
 import InstructorStack from './stacks/InstructorStack';
 import InstructorDashboard from './components/instructor/InstructorDashboard';
 import CreateCourse from './components/instructor/CreateCourse';
+import SignIn from './components/auth/SignIn';
+import SignUp from './components/auth/SignUp';
+import InstructorRegistration from './components/auth/InstructorRegistration';
+import InstructorLogin from './components/auth/InstructorLogin';
+import AllMyCourses from './components/instructor/AllMyCourses';
+import UpdateCourse from './components/instructor/UpdateCourse';
+import AdminStack from './stacks/AdminStack';
 
 
 
@@ -89,7 +96,17 @@ const App = () => {
               <Route index element={<InstructorDashboard/>} />
               <Route path='dashboard' element={<InstructorDashboard/>} />
               <Route path='create-course' element={<CreateCourse/>} />
+              <Route path='all-my-course' element={<AllMyCourses/>} />
+              <Route path='update-course/:id' element={<UpdateCourse/>} />
             </Route>
+            <Route path="/admin" element={<AdminStack toggleColorMode={toogleTheme}/>}>
+              <Route index element={<InstructorDashboard/>} />
+              <Route path='dashboard' element={<InstructorDashboard/>} />
+            </Route>
+            <Route path="/sign-in" element={<SignIn/>} /> 
+            <Route path="/sign-up" element={<SignUp/>} /> 
+            <Route path="/instructor-sign-in" element={<InstructorLogin/>} /> 
+            <Route path="/instructor-sign-up" element={<InstructorRegistration/>} /> 
             <Route path="*" element={<Error404/>} /> 
           </Routes>
         </Router>

@@ -16,7 +16,7 @@ import {
   IconButton,
   Divider
 } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
@@ -24,15 +24,37 @@ import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios'
 import {useNavigate} from 'react-router-dom'
 
-export default function CreateCourse() {
+export default function UpdateCourse() {
   const navigate = useNavigate()
+  const url = window.location.href;
+  const id = url.substring(url.lastIndexOf('/') + 1);
+
+  const [course, setCourse] = useState({})
+
+  useEffect(() => {
+    const fetchData = async() => {
+      const response = await axios.get(`http://localhost:5000/course/get/${id}`);
+      if (response.data.success) {
+        console.log(response.data.course);
+        setCourse(response.data.course);
+        setOutlines(response.data.course.outline);
+        setPreviewVideoLink(response.data.course.previewVideo)
+        setPreviewVideoPreview(response.data.course.previewVideo)
+        setThumbnailLink(response.data.course.thumbnail)
+        setThumbnailPreview(response.data.course.thumbnail)
+        console.log(course);
+      } else {
+        console.log(response.data.message);
+      }
+    }
+    fetchData();
+  },[])
+
+
   const handleSubmit = async(event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    
     const courseData = {
       title: data.get('title'),
       thumbnail: data.get('thumbnail'),
@@ -549,7 +571,7 @@ export default function CreateCourse() {
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <Grid container component="form" onSubmit={handleSubmit} spacing={2}>
           <Grid item xs={12} sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-            <Typography variant='h5'>Create Courses</Typography>
+            <Typography variant='h5'>Update Course {id }</Typography>
             <Box sx={{display: 'flex', gap: 2}}>
               <Button variant='contained'>See Instruction</Button>
             </Box>
@@ -563,6 +585,7 @@ export default function CreateCourse() {
               label="Title"
               name="title"
               variant="filled"
+              value={course.title}
             />
           </Grid>
           <Grid item xs={6}>
@@ -575,6 +598,7 @@ export default function CreateCourse() {
               type="text"
               id="description"
               variant="filled"
+              value={course.description}
             />
           </Grid>
           <Grid item xs={6}>
@@ -583,7 +607,7 @@ export default function CreateCourse() {
               name="category"
               select
               label="Category"
-              defaultValue="Design"
+              defaultValue={course.category}
               variant="filled"
               fullWidth
               onChange={(e)=>{handleCategoryClick(e.target.value)}}
@@ -621,6 +645,7 @@ export default function CreateCourse() {
               label="Price"
               name="price"
               variant="filled"
+              value={course.price}
             />
           </Grid>
           <Grid item xs={6} >
@@ -633,6 +658,7 @@ export default function CreateCourse() {
               type="text"
               id="discount"
               variant="filled"
+              value={course.discount}
             />
           </Grid>
           <Grid item xs={6} sx={{display: 'flex', gap: 1, position:'relative'}}>
@@ -959,9 +985,9 @@ export default function CreateCourse() {
                   <TextField
                     type="text"
                     sx={{width: '100%'}}
-                    id="question"
-                    label="Question"
-                    name="question"
+                    id="noteTitle"
+                    label="Note Title"
+                    name="noteTitle"
                     variant="filled"
                     value={note.referenceTitle}
                     onChange={(e) => handleNoteChange(outlineIndex, noteIndex, 'referenceTitle', e.target.value)}
@@ -969,9 +995,9 @@ export default function CreateCourse() {
                   <TextField
                     type="text"
                     sx={{width: '100%'}}
-                    id="question"
-                    label="Question"
-                    name="question"
+                    id="refLink"
+                    label="Reference Link"
+                    name="refLink"
                     variant="filled"
                     value={note.referenceLinks}
                     onChange={(e) => handleNoteChange(outlineIndex, noteIndex, 'referenceLinks', e.target.value)}

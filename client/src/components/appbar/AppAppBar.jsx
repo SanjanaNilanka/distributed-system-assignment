@@ -12,6 +12,9 @@ import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import ToggleColorMode from '../toggle-mode/ToggleColorMode';
+import axios from 'axios';
+import { Avatar, IconButton, Link } from '@mui/material';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const logoStyle = {
   width: '30px',
@@ -39,6 +42,68 @@ function AppAppBar({ mode, toggleColorMode }) {
       setOpen(false);
     }
   };
+
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+
+  React.useEffect(() => { 
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsLoggedIn(true)
+    } else {
+      setIsLoggedIn(false)
+    }
+  }, [])
+
+  const [loggedInUser, setLoggedInUser] = React.useState(null);
+  const [loggedInUserDetails, setLoggedInUserDetails] = React.useState(null);
+  
+  const token = localStorage.getItem('token');
+
+  React.useEffect(() => {
+    
+    const getLooggedInUser = async () => {
+      try {
+        const response = await axios.get(`http://localhost:7000/auth/logged-user`, {
+          headers: {
+            Authorization: `${token}`
+          }
+        });
+        
+        if (response.data.success) {
+          setLoggedInUser(response.data.user)
+          localStorage.setItem('role', response.data.user.role)
+          localStorage.setItem('userID', response.data.user._id)
+          console.log(loggedInUser)
+          console.log(response.data.user)
+        }
+      } catch (err) {
+        
+      }
+    };
+    
+    const getLooggedInUserDetails = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5001/learner/get/${localStorage.getItem('userID')}`);
+        
+        
+          setLoggedInUserDetails(response.data)
+          console.log(response.data)
+        
+      } catch (err) {
+        
+      }
+    };
+
+    getLooggedInUser();
+    getLooggedInUserDetails();
+  }, [])
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userID");
+    localStorage.removeItem("role");
+    window.location.href = '/';
+  }
 
   return (
     <div>
@@ -101,11 +166,11 @@ function AppAppBar({ mode, toggleColorMode }) {
             >
               <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                 <MenuItem
-                  onClick={() => scrollToSection('features')}
+                  href='/'
                   sx={{ py: '6px', px: '12px' }}
                 >
                   <Typography variant="body2" color="text.primary">
-                    Features
+                    <Link href='/'>Home</Link>
                   </Typography>
                 </MenuItem>
                 <MenuItem
@@ -150,26 +215,47 @@ function AppAppBar({ mode, toggleColorMode }) {
               }}
             >
               <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
-              <Button
-                color="primary"
-                variant="text"
-                size="small"
-                component="a"
-                href="/material-ui/getting-started/templates/sign-in/"
-                target="_blank"
-              >
-                Sign in
-              </Button>
-              <Button
-                color="primary"
-                variant="contained"
-                size="small"
-                component="a"
-                href="/material-ui/getting-started/templates/sign-up/"
-                target="_blank"
-              >
-                Sign up
-              </Button>
+              {isLoggedIn &&
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 2 }}>
+                  <IconButton onClick={logout}>
+                    <LogoutIcon/>
+                  </IconButton>
+                 
+                  <Typography >{loggedInUser?.email}</Typography>
+                  <Avatar/>
+                </Box>
+              }
+              {!isLoggedIn &&
+                <Box
+                  sx={{
+                    display: { xs: 'none', md: 'flex' },
+                    gap: 0.5,
+                    alignItems: 'center',
+                  }}
+                >
+                  <Button
+                    color="primary"
+                    variant="text"
+                    size="small"
+                    component="a"
+                    href="/material-ui/getting-started/templates/sign-in/"
+                    target="_blank"
+                  >
+                    Sign in
+                  </Button>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    size="small"
+                    component="a"
+                    href="/material-ui/getting-started/templates/sign-up/"
+                    target="_blank"
+                  >
+                    Sign up
+                  </Button>
+                </Box>
+              }
+              
             </Box>
             <Box sx={{ display: { sm: '', md: 'none' } }}>
               <Button

@@ -16,6 +16,8 @@ import Features from './Features';
 import Testimonials from './Testimonials';
 import FAQ from './FAQ';
 import Instructor from './Instructor';
+import Course from './Course';
+import { Container, Typography } from '@mui/material';
 
 export default function LandingPage() {
 
@@ -28,6 +30,11 @@ export default function LandingPage() {
       <Box sx={{ bgcolor: 'background.default' }}>
         <Divider />
         <LogoCollection />
+        <Container sx={{mb:5}}>
+          <Typography sx={{textAlign: 'center', mb:2}} variant='h4'>Courses</Typography>
+          <Course/>
+        </Container>
+        
         <Features />
         <Testimonials />
         <Highlights />

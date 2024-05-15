@@ -26,6 +26,7 @@ import axios from 'axios';
 import { Avatar } from '@mui/material';
 import AllMyCourses from '../components/instructor/AllMyCourses';
 import UpdateCourse from '../components/instructor/UpdateCourse';
+import AdminDashboard from '../components/admin/AdminDashboard';
 
 const drawerWidth = 240;
 
@@ -193,7 +194,7 @@ export default function AdminStack({ mode, toggleColorMode }) {
             noWrap
             sx={{ flexGrow: 1 }}
           >
-            Instructor Dashboard
+            Admin Dashboard
           </Typography>
           <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
           <IconButton color="inherit">
@@ -204,7 +205,7 @@ export default function AdminStack({ mode, toggleColorMode }) {
           </IconButton>
           {isLoggedIn &&
             <Box sx={{display:'flex', alignItems:'center', gap:1, ml:2}}>
-              <Typography >{loggedInUserDetails?.fullName}</Typography>
+              <Typography >LearnVerse Admin</Typography>
               <Avatar/>
             </Box>
           }
@@ -244,11 +245,8 @@ export default function AdminStack({ mode, toggleColorMode }) {
       >
         <Toolbar />
         <Routes>
-          <Route path='/' element={<InstructorDashboard/>} />
-          <Route path='dashboard' element={<InstructorDashboard/>} />
-          <Route path='/create-course' element={<CreateCourse />} />
-          <Route path='/all-my-course' element={<AllMyCourses />} />
-          <Route path='/update-course/:id' element={<UpdateCourse/>} />
+          <Route path='/' element={<AdminDashboard/>} />
+          <Route path='/dashboard' element={<AdminDashboard/>} />
         </Routes>
       </Box>
     </Box>

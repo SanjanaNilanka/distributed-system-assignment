@@ -18,6 +18,7 @@ import {
   OutlinedInput,
   Select,
   Snackbar,
+  Toolbar,
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/system";
@@ -45,7 +46,7 @@ const Payment = () => {
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
   const [country, setCountry] = useState("");
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState(localStorage.getItem("price"));
   const [currency, setCurrency] = useState("USD");
 
   const [paymentStatus, setPaymentStatus] = useState(null);
@@ -118,6 +119,7 @@ const Payment = () => {
 
   return (
     <>
+      <Toolbar/>
       <Box
         mt={4}
         mb={4}
@@ -273,6 +275,7 @@ const Payment = () => {
                     placeholder="49.99$"
                     onChange={(e) => setAmount(e.target.value)}
                     required
+                    readOnly
                   />
                 </FormGrid>
               </Grid>

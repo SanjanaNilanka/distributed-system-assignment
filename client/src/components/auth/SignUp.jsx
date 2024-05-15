@@ -13,6 +13,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { alpha, createTheme, ThemeProvider } from '@mui/material/styles';
 import { Navigate } from 'react-router-dom'
+import axios from 'axios';
 
 function Copyright(props) {
   return (
@@ -34,17 +35,40 @@ export default function SignUp() {
   const handleSubmit = async(event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    
     const email = data.get('email');
     const password = data.get('password');
+    const firstName = data.get('firstName');
+    const lastName = data.get('lastName');
+
+    const learnerAuth = {
+      email: email,
+      password: password,
+      role: 'learner'
+    }
+    
     
 
     try {
+      const response = await axios.post('http://localhost:7000/auth/register', learnerAuth)
+      if (response.data.success) { 
+        try {
+          const learnerDetails = {
+            _id: response.data.user._id,
+            name: `${firstName} ${lastName}`,
+            email: email,
+          }
+          const instructorResponse = await axios.post('http://localhost:5001/learner/create-learner', learnerDetails);
+          alert('Succesfully registerd as user')
+          window.location.pathname = '/sign-in'
+        } catch (err) { 
+          alert('Failed to register user');
+        }
+      }
       
-      window.location.pathname = '/sign-in'
       console.log("Sign Up Success");
     } catch (err) { 
       console.log(err.message);
+      alert('Failed to register user');
     }
   };
 
@@ -118,7 +142,7 @@ export default function SignUp() {
           >
             <img src='images/logo.png' width={60} />
             <Typography component="h1" variant="h5">
-              Sign in
+              Sign up
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>

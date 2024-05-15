@@ -11,15 +11,13 @@ const learnerSchema = new mongoose.Schema({
   },
   bio: {
     type: String,
-    required: false,
   },
   email: {
     type: String,
     required: false,
   },
   learner_pic: {
-    type: String,
-    required: false,
+    type: String
   },
   enrolledCourses: [
     {

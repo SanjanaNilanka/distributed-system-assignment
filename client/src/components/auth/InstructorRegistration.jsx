@@ -35,7 +35,6 @@ export default function InstructorRegistration() {
   const handleSubmit = async(event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    alert('hi')
     const email = data.get('email');
     const password = data.get('password');
     const firstName = data.get('firstName');
@@ -209,7 +208,7 @@ export default function InstructorRegistration() {
             <Grid container justifyContent="center">
               <Grid item>
                 Already registered as instructor? &nbsp;
-                <Link href="/sign-in" variant="body2" sx={{fontStyle: 'italic'}}>
+                <Link href="/instructor-sign-in" variant="body2" sx={{fontStyle: 'italic'}}>
                   Sign in
                 </Link>
               </Grid>

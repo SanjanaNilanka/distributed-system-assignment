@@ -29,6 +29,8 @@ import LearnerDashboard from "./components/learner/learnerDashboard";
 import LearnerStack from "./stacks/LearnerStack";
 import EnrolledCourses from "./components/learner/enrolled-courses";
 import CoursePage from "./components/learner/coursePages";
+import AdminLogin from './components/auth/AdminLogin';
+import AdminDashboard from './components/admin/AdminDashboard';
 
 /*const getDesignTokens = (mode) => ({
   palette: {
@@ -134,10 +136,18 @@ const App = () => {
       <main>
         <Router>
           <Routes>
+
             <Route path="/" element={<CommonStack toggleTheme={toogleTheme} />}>
               <Route index element={<LandingPage />} />
               <Route path="home" element={<LandingPage />} />
+              <Route path="payments" element={<Payment/>} />
+              <Route path="paymentSuccess" element={<PaymentSuccess/>} />
+              <Route path="getPayment/:transactionId" element={<GetPayment />} />
+              <Route path="enrolled-courses" element={<EnrolledCourses />} />
+              <Route path="courses/:courseId" element={<CoursePage />} />   
+              <Route path="all-courses" element={<CoursePage />} />   
             </Route>
+
             <Route path="/instructor" element={<InstructorStack toggleColorMode={toogleTheme}/>}>
               <Route index element={<InstructorDashboard/>} />
               <Route path='dashboard' element={<InstructorDashboard/>} />
@@ -145,22 +155,18 @@ const App = () => {
               <Route path='all-my-course' element={<AllMyCourses/>} />
               <Route path='update-course/:id' element={<UpdateCourse/>} />
             </Route>
+
             <Route path="/admin" element={<AdminStack toggleColorMode={toogleTheme}/>}>
-              <Route index element={<InstructorDashboard/>} />
-              <Route path='dashboard' element={<InstructorDashboard/>} />
+              <Route index element={<AdminDashboard/>} />
+              <Route path='dashboard' element={<AdminDashboard/>} />
             </Route>
+
             <Route path="/sign-in" element={<SignIn/>} /> 
             <Route path="/sign-up" element={<SignUp/>} /> 
             <Route path="/instructor-sign-in" element={<InstructorLogin/>} /> 
             <Route path="/instructor-sign-up" element={<InstructorRegistration/>} /> 
-            <Route path="*" element={<Error404/>} /> 
-
-            <Route path="/" element={<LandingPage/>} />
+            <Route path="/admin-sign-in" element={<AdminLogin/>} /> 
             <Route path="*" element={<Error404/>} />
-            <Route path="/payments" element={<Payment/>} />
-            <Route path="/paymentSuccess" element={<PaymentSuccess/>} />
-            <Route path="/getPayment/:transactionId" element={<GetPayment/>} />
-            <Route path="*" element={<Error404 />} />
 
             <Route
               path="/learner"
@@ -170,8 +176,8 @@ const App = () => {
               <Route path="dashboard" element={<LearnerDashboard />} />
              
             </Route>
-             <Route path="enrolled-courses" element={<EnrolledCourses />} />
-              <Route path="courses/:courseId" element={<CoursePage />} />
+
+            
           </Routes>
         </Router>
       </main>

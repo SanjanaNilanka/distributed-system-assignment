@@ -15,4 +15,6 @@ router.post("/create", createCourse);
 // Delete course route
 router.delete("/delete/:courseId", deleteCourse);
 
+router.post('/send-mail')
+
 module.exports = router;

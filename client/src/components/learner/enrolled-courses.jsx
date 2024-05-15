@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Toolbar,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
@@ -136,6 +137,7 @@ const EnrolledCourses = () => {
 
   return (
     <div style={{ padding: "16px", paddingTop: "20px", textAlign: "center" }}>
+      <Toolbar/>
       <TextField
         placeholder="Search"
         variant="outlined"

@@ -9,8 +9,8 @@ const app = express();
 app.use(cors());
 app.use(bodyParse.json());
 
-const PORT = process.env.PORT || 5000;
-const DB_URL = process.env.DB_URL;
+const PORT = process.env.PORT || 2000;
+const DB_URL = process.env.DB_URL || "mongodb+srv://hasinduranasingheb2098:o2ndrPgUPHjk6KlF@cluster0.fhhrtiv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 const paymentRoutes = require("./routes/PaymentRoutes.js");
 

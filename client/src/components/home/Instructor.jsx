@@ -26,7 +26,7 @@ export default function Instructor() {
       >
         <Typography variant='h4' sx={{}}>Become an instructor</Typography>
         <Typography>Instructors from around the world teach millions of learners on LearnVerse. We provide the tools and skills to teach what you love.</Typography>
-        <Button variant='contained'>Start Teaching Today</Button>
+        <Button variant='contained' href='/instructor-sign-up'>Start Teaching Today</Button>
       </Box>
     </Container>
   )

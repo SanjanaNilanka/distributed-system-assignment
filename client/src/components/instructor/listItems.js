@@ -9,6 +9,15 @@ import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import LogoutIcon from '@mui/icons-material/Logout';
+import SettingsIcon from '@mui/icons-material/Settings';
+
+const logout = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("userID");
+  localStorage.removeItem("role");
+  window.location.href = '/';
+}
 
 export const mainListItems = (
   <React.Fragment>
@@ -50,23 +59,17 @@ export const secondaryListItems = (
     <ListSubheader component="div" inset>
       Saved reports
     </ListSubheader>
-    <ListItemButton>
+    <ListItemButton onClick={logout}>
       <ListItemIcon>
-        <AssignmentIcon />
+        <LogoutIcon />
       </ListItemIcon>
-      <ListItemText primary="Current month" />
+      <ListItemText primary="Logout" />
     </ListItemButton>
     <ListItemButton>
       <ListItemIcon>
-        <AssignmentIcon />
+        <SettingsIcon />
       </ListItemIcon>
-      <ListItemText primary="Last quarter" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Year-end sale" />
+      <ListItemText primary="Settings" />
     </ListItemButton>
   </React.Fragment>
 );

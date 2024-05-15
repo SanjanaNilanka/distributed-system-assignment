@@ -1,5 +1,5 @@
 const Payment = require("../models/Payment.js");
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY || "sk_test_51PDpiZP9aYeGaiLJ0l2nXuyhFhLFxw8sChfhcXewKXlxCljLWhkqMuP8fG6CzzslZM8zM6YhGrgXpdIY1Q5iknLs004V8g72Vu");
 
 exports.processPayment = async (req, res) => {
   const { userId, courseId, amount, currency, paymentType, firstName, lastName, address1, address2, city, state, zip, country } = req.body;

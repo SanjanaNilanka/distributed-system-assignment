@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Button,
   Typography,
@@ -18,42 +18,89 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const CoursePage = () => {
-  const course = JSON.parse(localStorage.getItem("courseData"));
+  const { courseId } = useParams();
   const [checkedLessons, setCheckedLessons] = useState([]);
-  const [totalProgress, setTotalProgress] = useState(0); // State to track total progress
-  const navigate = useNavigate(); // Initialize navigate
+  const [totalProgress, setTotalProgress] = useState(0);
+  const [course, setCourse] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Calculate total progress when checkedLessons changes
-    const calculateTotalProgress = () => {
-      const totalLessons = course.lessons.length;
-      const completedLessons = checkedLessons.length;
-      const progress = (completedLessons / totalLessons) * 100;
-      setTotalProgress(progress);
+    if (!courseId) {
+      console.error("courseId is not defined");
+      return;
+    }
+
+    const fetchCourseDetails = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/course/get/${courseId}`);
+        const courseData = response.data;
+
+        const totalLessons = courseData.course.outline.reduce(
+          (total, outlineItem) => {
+            return total + (outlineItem.lessons ? outlineItem.lessons.length : 0);
+          },
+           0
+        );
+
+        const lectureTitles = courseData.course.outline.map((item) => item.lectureTitle);
+        const teachersNotes = courseData.course.outline.reduce(
+          (allNotes, outlineItem) => {
+            if (outlineItem.teachersNote) {
+              return [...allNotes, ...outlineItem.teachersNote];
+            }
+            return allNotes;
+          },
+          []
+        );
+
+        const combinedCourse = {
+          ...courseData.course,
+          totalLessons: totalLessons,
+          lectureTitles: lectureTitles,
+          teachersNotes: teachersNotes,
+          lessons: courseData.course.outline.reduce((lessonArray, outlineItem) => {
+            if (outlineItem.lessons) {
+              return [...lessonArray, ...outlineItem.lessons];
+            }
+            return lessonArray;
+          }, [])
+        };
+
+        setCourse(combinedCourse);
+      } catch (error) {
+        console.error("Error fetching course details:", error);
+      }
     };
 
-    calculateTotalProgress();
-  }, [checkedLessons, course.lessons]);
+    fetchCourseDetails();
+  }, [courseId]);
 
   const handleCheckboxChange = (lessonId) => {
     setCheckedLessons((prevCheckedLessons) => {
-      // Check if the lessonId is already in checkedLessons
       const isChecked = prevCheckedLessons.includes(lessonId);
-
-      // If the checkbox is already checked, remove it from the checkedLessons
       if (isChecked) {
         return prevCheckedLessons.filter((id) => id !== lessonId);
       } else {
-        // If the checkbox is not checked, add it to the checkedLessons
         return [...prevCheckedLessons, lessonId];
       }
     });
   };
 
+  useEffect(() => {
+    if (course) {
+      const completedLessons = checkedLessons.length;
+      const progress = (completedLessons / course.totalLessons) * 100;
+      setTotalProgress(progress);
+    }
+  }, [checkedLessons, course]);
+
+  if (!course) {
+    return <Typography variant="h4">Loading...</Typography>;
+  }
+
   return (
     <Container maxWidth="xl" style={{ padding: "40px" }}>
       <Grid container spacing={6}>
-        {/* Course details and Thumbnail */}
         <Grid item xs={12}>
           <div
             style={{
@@ -62,6 +109,8 @@ const CoursePage = () => {
               borderRadius: "5px",
               display: "flex",
               justifyContent: "space-between",
+              flexDirection: "row",
+              alignItems: "center",
             }}
           >
             <div>
@@ -79,21 +128,44 @@ const CoursePage = () => {
               >
                 {course.description}
               </Typography>
+              <div
+                style={{
+                  backgroundColor: "#e3f2fd",
+                  padding: "20px",
+                  paddingLeft: "2px",
+                  borderRadius: "5px",
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: "45px",
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  gutterBottom
+                  style={{ fontSize: "16px" }}
+                >
+                  Category: {course.category}
+                </Typography>
+                {course.subCategory && (
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    gutterBottom
+                    style={{ fontSize: "16px" }}
+                  >
+                    Subcategory: {course.subCategory}
+                  </Typography>
+                )}
+              </div>
               <Typography
                 variant="body2"
                 color="textSecondary"
                 gutterBottom
                 style={{ fontSize: "16px" }}
               >
-                Category: {course.category}
-              </Typography>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                gutterBottom
-                style={{ fontSize: "16px" }}
-              >
-                Total Lessons: {course.lessons.length}
+                Total Lessons: {course.totalLessons}
               </Typography>
             </div>
             <div>
@@ -110,19 +182,17 @@ const CoursePage = () => {
           </div>
         </Grid>
 
-        {/* Back button */}
         <Grid item xs={12}>
           <Button
             variant="contained"
             color="primary"
             startIcon={<ArrowBackIcon />}
-            onClick={() => navigate(`/enrolled-Courses`)}
+            onClick={() => navigate(`/enrolled-courses`)}
           >
             Back to Enrollments
           </Button>
         </Grid>
 
-        {/* Total Progress */}
         <Grid item xs={12}>
           <LinearProgress
             variant="determinate"
@@ -139,7 +209,6 @@ const CoursePage = () => {
           </Typography>
         </Grid>
 
-        {/* Chapters Table */}
         <Grid item xs={12}>
           <Typography variant="h4" gutterBottom>
             Chapters
@@ -155,9 +224,9 @@ const CoursePage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {course.lessons.map((lesson, index) => (
+                {course.lessons.map((lesson) => (
                   <TableRow
-                    key={index}
+                    key={lesson.lessonId} // Ensure each lesson has a unique key
                     style={{
                       backgroundColor: checkedLessons.includes(lesson.lessonId)
                         ? "#c8e6c9"

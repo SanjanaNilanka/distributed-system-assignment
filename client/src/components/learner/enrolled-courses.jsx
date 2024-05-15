@@ -187,9 +187,9 @@ const EnrolledCourses = () => {
                     <Typography variant="body2" color="textSecondary">
                       Total Lessons: {course.totalLessons}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary">
+                    {/* <Typography variant="body2" color="textSecondary">
                       Status: {course.status}
-                    </Typography>
+                    </Typography> */}
                   </div>
                   <div
                     style={{

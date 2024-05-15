@@ -97,10 +97,10 @@ const App = () => {
             >
               <Route index element={<LearnerDashboard />} />
               <Route path="dashboard" element={<LearnerDashboard />} />
+              <Route path="enrolled-courses" element={<EnrolledCourses />} />
              
             </Route>
-             <Route path="enrolled-courses" element={<EnrolledCourses />} />
-              <Route path="courses/:courseId" element={<CoursePage />} />
+             <Route path="courses/:courseId" element={<CoursePage />} />
           </Routes>
         </Router>
       </main>

@@ -7,7 +7,7 @@ const learnerSchema = new mongoose.Schema({
   },
   name: {
     type: String,
-    required: true,
+    required: false,
   },
   bio: {
     type: String,

@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: instructor-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: instructor-service
+  template:
+    metadata:
+      labels:
+        app: instructor-service
+    spec:
+      containers:
+      - name: instructor-service
+        image: sanjananilanka/instructor-service:latest
+        ports:
+        - containerPort: 8000

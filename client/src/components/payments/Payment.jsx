@@ -61,7 +61,7 @@ const Payment = () => {
   const handlePayment = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/payments/processPayment",
+        "http://localhost:2000/payments/processPayment",
         {
           userId,
           courseId,

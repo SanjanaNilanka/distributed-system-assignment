@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: learner-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: learner-service
+  template:
+    metadata:
+      labels:
+        app: learner-service
+    spec:
+      containers:
+      - name: learner-service
+        image: sanjananilanka/learner-service:latest
+        ports:
+        - containerPort: 5001
